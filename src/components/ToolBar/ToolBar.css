@@ -1,0 +1,11 @@
+.tool-bar-bg {
+    backdrop-filter: blur(75px);
+    box-shadow: 0 0 25px 25px rgba(21, 24, 43, 0.67);
+    background: rgba(20, 23, 40, 0.6);
+    transition: all 0.3s ease;
+}
+
+.active-tool-bar {
+    box-shadow: inset 4px 4px 15px 0 #0fffd7;
+    background: #1f2340;
+}

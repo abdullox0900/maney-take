@@ -1,0 +1,4 @@
+.rate-type-selector-active {
+    color: #0FFFD7;
+    background: linear-gradient(180deg, rgba(23, 25, 46, 0) 50%, rgba(15, 255, 215, 0.25) 110%);
+}

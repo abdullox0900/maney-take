@@ -1,0 +1,64 @@
+.gifts-page {
+    background: rgba(21, 24, 43, 0.9);
+    backdrop-filter: blur(250px);
+}
+
+.gift-card {
+    background-color: rgba(27, 30, 54, 0.56);
+    border: 1px solid #2B334E;
+    transition: all 0.2s ease;
+}
+
+.gift-card.active {
+    border: 1px solid #3450a8;
+    background: rgba(28, 36, 87, 0.56);
+}
+
+.gift-image {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.empty-state-cube {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    perspective: 800px;
+}
+
+.empty-state-cube .face {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-color: #00FFD7;
+    opacity: 0.8;
+}
+
+.empty-state-cube .top {
+    transform: rotateX(90deg) translateZ(30px);
+}
+
+.empty-state-cube .bottom {
+    transform: rotateX(-90deg) translateZ(30px);
+    background-color: #2A3362;
+}
+
+.empty-state-cube .front {
+    transform: translateZ(30px);
+    background-color: #2A3362;
+}
+
+.empty-state-cube .back {
+    transform: rotateY(180deg) translateZ(30px);
+    background-color: #2A3362;
+}
+
+.empty-state-cube .left {
+    transform: rotateY(-90deg) translateZ(30px);
+    background-color: #2A3362;
+}
+
+.empty-state-cube .right {
+    transform: rotateY(90deg) translateZ(30px);
+    background-color: #2A3362;
+}
