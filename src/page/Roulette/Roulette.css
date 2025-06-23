@@ -1,0 +1,79 @@
+.roulette-container {
+    margin: 25px 0;
+}
+
+.roulette-box {
+    position: relative;
+    height: 100px;
+    background: #191B31;
+    border-top: 1px solid rgba(43, 47, 83, 0.2);
+    border-bottom: 1px solid rgba(43, 47, 83, 0.2);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.roulette-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 100px;
+    background: linear-gradient(90deg, #191B31 0%, rgba(25, 27, 49, 0) 100%);
+    z-index: 2;
+}
+
+.roulette-box::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 100px;
+    background: linear-gradient(270deg, #191B31 0%, rgba(25, 27, 49, 0) 100%);
+    z-index: 2;
+}
+
+.roulette-center-line {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 100px;
+    z-index: 10;
+    background-image: url('../../assets/icon/roulette-center.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 1;
+}
+
+.roulette-items {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: absolute;
+    left: 0;
+    will-change: transform;
+    padding-left: calc(50vw - 22.5px);
+    padding-right: calc(50vw - 22.5px);
+}
+
+.roulette-item {
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid transparent;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+.roulette-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
