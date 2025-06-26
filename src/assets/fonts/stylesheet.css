@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'SFProText';
-    src: url('./assets/fonts/SFProText-Heavy.woff2') format('woff2');
+    src: url('SFProText-Heavy.woff2') format('woff2');
     font-weight: 900;
     font-style: normal;
     font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
     font-family: 'SFProText';
-    src: url('./assets/fonts/SFProText-Regular.woff2') format('woff2');
+    src: url('SFProText-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -16,7 +16,7 @@
 
 @font-face {
     font-family: 'SFProText';
-    src: url('./assets/fonts/SFProText-Medium.woff2') format('woff2');
+    src: url('SFProText-Medium.woff2') format('woff2');
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -24,7 +24,7 @@
 
 @font-face {
     font-family: 'SFProText';
-    src: url('./assets/fonts/SFProText-Bold.woff2') format('woff2');
+    src: url('SFProText-Bold.woff2') format('woff2');
     font-weight: bold;
     font-style: normal;
     font-display: swap;
@@ -32,7 +32,7 @@
 
 @font-face {
     font-family: 'SFProText';
-    src: url('./assets/fonts/SFProText-Light.woff2') format('woff2');
+    src: url('SFProText-Light.woff2') format('woff2');
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -40,7 +40,7 @@
 
 @font-face {
     font-family: 'SFProText';
-    src: url('./assets/fonts/SFProText-Semibold.woff2') format('woff2');
+    src: url('SFProText-Semibold.woff2') format('woff2');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
@@ -48,17 +48,9 @@
 
 @font-face {
     font-family: 'SFProText';
-    src: url('./assets/fonts/SFProText-Thin.woff2') format('woff2');
+    src: url('SFProText-Thin.woff2') format('woff2');
     font-weight: 100;
     font-style: normal;
     font-display: swap;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-body {
-    font-family: 'SFProText', sans-serif;
-    background-color: #15182B;
-}

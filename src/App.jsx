@@ -4,7 +4,12 @@ import Header from './components/Header/Header'
 import ToolBar from './components/ToolBar/ToolBar'
 import GiftsPage from './page/GiftsPage/GiftsPage'
 import Jackpot from './page/Jackpot/Jackpot'
+import BettingHistoryView from './page/Jackpot/views/BettingHistoryView'
+import InventoryBetView from './page/Jackpot/views/InventoryBetView'
+import Profile from './page/Profile/Profile'
 import Roulette from './page/Roulette/Roulette'
+import Shop from './page/Shop/Shop'
+import ShopItemDetail from './page/Shop/ShopItemDetail'
 
 function App() {
 	return (
@@ -13,13 +18,13 @@ function App() {
 			<Routes>
 				<Route path='/' element={<Navigate to='/jackpot' replace />} />
 				<Route path='/jackpot' element={<Jackpot />} />
+				<Route path='/jackpot/history' element={<BettingHistoryView />} />
+				<Route path='/jackpot/inventory-bet' element={<InventoryBetView />} />
 				<Route path='/roulette' element={<Roulette />} />
 				<Route path='/gifts' element={<GiftsPage />} />
-				<Route path='/shop' element={<div className='p-4'>Shop Page</div>} />
-				<Route
-					path='/profile'
-					element={<div className='p-4'>Profile Page</div>}
-				/>
+				<Route path='/shop' element={<Shop />} />
+				<Route path='/shop/:id' element={<ShopItemDetail />} />
+				<Route path='/profile' element={<Profile />} />
 			</Routes>
 			<ToolBar />
 		</>

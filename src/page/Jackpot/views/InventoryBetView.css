@@ -1,0 +1,47 @@
+.inventory-page {
+    background: rgba(21, 24, 43, 0.9);
+    backdrop-filter: blur(250px);
+}
+
+.inventory-card {
+    background-color: rgba(27, 30, 54, 0.56);
+    border: 1px solid #2B334E;
+    transition: all 0.2s ease;
+}
+
+.inventory-card.active {
+    border: 1px solid #3450a8;
+    background: rgba(28, 36, 87, 0.56);
+}
+
+.inventory-image {
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tab buttons */
+button:focus {
+    outline: none;
+}
+
+/* Animation for the bet button */
+@keyframes pulseButton {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.03);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.fixed button {
+    animation: pulseButton 2s infinite;
+}
