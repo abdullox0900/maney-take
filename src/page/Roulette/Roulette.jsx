@@ -10,20 +10,150 @@ import KrystalRed from '../../assets/krystal-v2.svg'
 import KrystalGreen from '../../assets/krystal-v3.svg'
 import NickName from '../../assets/nick-name.svg'
 
+const ITEM_WIDTH = 57 // px (width + gap)
+const REPEAT = 15 // how many times to repeat the base array for smoothness
+
+const baseNumbers = [
+	{ number: 0, color: 'green', image: KrystalGreen },
+	{ number: 1, color: 'red', image: KrystalRed },
+	{ number: 8, color: 'black', image: KrystalBlue },
+	{ number: 2, color: 'red', image: KrystalRed },
+	{ number: 10, color: 'black', image: KrystalBlue },
+	{ number: 3, color: 'red', image: KrystalRed },
+	{ number: 11, color: 'black', image: KrystalBlue },
+	{ number: 4, color: 'red', image: KrystalRed },
+	{ number: 13, color: 'black', image: KrystalBlue },
+	{ number: 5, color: 'red', image: KrystalRed },
+	{ number: 9, color: 'black', image: KrystalBlue },
+	{ number: 6, color: 'red', image: KrystalRed },
+	{ number: 12, color: 'black', image: KrystalBlue },
+	{ number: 7, color: 'red', image: KrystalRed },
+	{ number: 14, color: 'black', image: KrystalBlue },
+]
+
+function getRandomIndexByType(type) {
+	if (type === 'red') return Math.floor(Math.random() * 7) + 1
+	if (type === 'black') return Math.floor(Math.random() * 7) + 8
+	if (type === 'green') return 0
+	return Math.floor(Math.random() * 15)
+}
+
 const Roulette = () => {
 	const [isSpinning, setIsSpinning] = useState(false)
 	const [spinResult, setSpinResult] = useState(null)
-	const rouletteRef = useRef(null)
+	const [winnerGlobalIndex, setWinnerGlobalIndex] = useState(null)
+	const [selectedBetType, setSelectedBetType] = useState(null)
 	const [items, setItems] = useState([])
-	const [openCategoryId, setOpenCategoryId] = useState(null)
-	const [bets, setBets] = useState([])
-	const [betCount, setBetCount] = useState(3)
+	const rouletteRef = useRef(null)
+	const containerRef = useRef(null)
+	const currentIndexRef = useRef(null) // Track the current center index
 
-	// Bet categories data
+	// Prepare repeated items for smooth scroll
+	useEffect(() => {
+		let arr = []
+		for (let i = 0; i < REPEAT; ++i) {
+			arr = arr.concat(
+				baseNumbers.map((b, idx) => ({ ...b, id: i * 100 + idx }))
+			)
+		}
+		setItems(arr)
+	}, [])
+
+	// Center the initial position
+	useEffect(() => {
+		if (items.length && rouletteRef.current && containerRef.current) {
+			// Center the middle of the array
+			const centerIdx = Math.floor(items.length / 2)
+			centerOn(centerIdx, false)
+			currentIndexRef.current = centerIdx
+		}
+	}, [items])
+
+	// Helper to center on a given global index
+	function centerOn(globalIdx, animate = false) {
+		if (!rouletteRef.current || !containerRef.current) return
+		const containerWidth = containerRef.current.offsetWidth
+		const offset =
+			containerWidth / 2 - (globalIdx * ITEM_WIDTH + ITEM_WIDTH / 2)
+		rouletteRef.current.style.transition = animate
+			? 'transform 2.5s cubic-bezier(0.25,0.8,0.4,1)'
+			: 'none'
+		rouletteRef.current.style.transform = `translateX(${offset}px)`
+	}
+
+	// Main spin logic
+	function spinRoulette(betType) {
+		if (isSpinning || !items.length) return
+		// Infinite scroll: if currentIndex is too close to the end, reset to middle
+		let startIdx = currentIndexRef.current ?? Math.floor(items.length / 2)
+		const minRounds = 2
+		const safeMargin = baseNumbers.length * 3
+		if (startIdx > items.length - safeMargin) {
+			// Instantly jump to the middle
+			const centerIdx = Math.floor(items.length / 2)
+			centerOn(centerIdx, false)
+			startIdx = centerIdx
+			currentIndexRef.current = centerIdx
+		}
+		setIsSpinning(true)
+		setSpinResult(null)
+		setSelectedBetType(betType)
+
+		// 1. Pick a winner index in baseNumbers
+		const winnerBaseIdx = getRandomIndexByType(betType)
+		// 2. Always spin at least 2 full rounds
+		const winnerGlobalIdx =
+			startIdx + baseNumbers.length * minRounds + winnerBaseIdx
+		setWinnerGlobalIndex(winnerGlobalIdx)
+
+		// 3. Animate to that index
+		setTimeout(() => {
+			centerOn(winnerGlobalIdx, true)
+		}, 50)
+
+		// 4. After animation, show result and highlight
+		setTimeout(() => {
+			setIsSpinning(false)
+			const winner = items[winnerGlobalIdx]
+			setSpinResult({
+				number: winner.number,
+				color: winner.color,
+				colorName:
+					winner.number === 0
+						? 'Green'
+						: winner.number >= 1 && winner.number <= 7
+						? 'Red'
+						: 'Black',
+			})
+			currentIndexRef.current = winnerGlobalIdx
+		}, 2600)
+	}
+
+	// Highlight winner after spin
+	useEffect(() => {
+		if (!isSpinning && winnerGlobalIndex !== null && rouletteRef.current) {
+			const els = rouletteRef.current.querySelectorAll('.roulette-item')
+			els.forEach((el, idx) => {
+				el.classList.toggle('winner', idx === winnerGlobalIndex)
+			})
+		}
+	}, [isSpinning, winnerGlobalIndex])
+
+	// Reset highlight when spinning again
+	useEffect(() => {
+		if (isSpinning && rouletteRef.current) {
+			const els = rouletteRef.current.querySelectorAll('.roulette-item')
+			els.forEach(el => el.classList.remove('winner'))
+		}
+	}, [isSpinning])
+
+	// UI
 	const betCategories = [
 		{
 			id: 1,
 			icon: KrystalRed,
+			name: 'Red',
+			range: '1-7',
 			count: '2 Bets',
 			amount: '$1.00',
 			players: [
@@ -34,7 +164,9 @@ const Roulette = () => {
 		},
 		{
 			id: 2,
-			icon: KrystalGreen,
+			icon: KrystalBlue,
+			name: 'Black',
+			range: '8-14',
 			count: '2 Bets',
 			amount: '$1.00',
 			players: [
@@ -45,7 +177,9 @@ const Roulette = () => {
 		},
 		{
 			id: 3,
-			icon: KrystalBlue,
+			icon: KrystalGreen,
+			name: 'Green',
+			range: '0',
 			count: '2 Bets',
 			amount: '$1.00',
 			players: [
@@ -56,92 +190,13 @@ const Roulette = () => {
 		},
 	]
 
-	// Toggle category open/close
+	const [openCategoryId, setOpenCategoryId] = useState(null)
 	const toggleCategory = categoryId => {
-		if (openCategoryId === categoryId) {
-			setOpenCategoryId(null)
-		} else {
-			setOpenCategoryId(categoryId)
-		}
-	}
-
-	// Create base items
-	useEffect(() => {
-		const baseItems = []
-		for (let i = 0; i < 20; i++) {
-			const types = ['red', 'blue', 'green']
-			const itemImages = [KrystalRed, KrystalBlue, KrystalGreen]
-			const typeIndex = i % 3
-
-			baseItems.push({
-				id: i + 1,
-				item: itemImages[typeIndex],
-				type: types[typeIndex],
-			})
-		}
-
-		// Clone items multiple times to create a longer list (like in jQuery example)
-		let allItems = [...baseItems]
-		for (let i = 0; i < 3; i++) {
-			allItems = [
-				...allItems,
-				...baseItems.map((item, index) => ({
-					...item,
-					id: item.id + baseItems.length * (i + 1),
-				})),
-			]
-		}
-
-		setItems(allItems)
-	}, [])
-
-	const spinRoulette = () => {
-		if (isSpinning) return
-
-		setIsSpinning(true)
-		setSpinResult(null)
-
-		// Random winning index (similar to the jQuery example)
-		const randomIndex = Math.floor(Math.random() * (items.length - 30)) + 30
-		const winningItem = items[randomIndex]
-
-		// Calculate position to move the roulette
-		// Each item is 45px wide with 12px gap (57px total)
-		const itemWidth = 57
-		const centerOffset = window.innerWidth / 2 - itemWidth / 2
-		const scrollAmount = randomIndex * itemWidth - centerOffset
-
-		if (rouletteRef.current) {
-			// Reset position first without animation
-			rouletteRef.current.style.transition = 'none'
-			rouletteRef.current.style.transform = 'translateX(0)'
-
-			// Force reflow to make sure the reset takes effect
-			void rouletteRef.current.offsetWidth
-
-			// Start animation
-			rouletteRef.current.style.transition =
-				'transform 10s cubic-bezier(0.1, 0.7, 0.1, 1)'
-			rouletteRef.current.style.transform = `translateX(-${scrollAmount}px)`
-
-			// Highlight winning item after animation completes
-			setTimeout(() => {
-				setIsSpinning(false)
-				setSpinResult(winningItem.type)
-
-				// Add highlight to the winning item
-				const itemElements =
-					rouletteRef.current.querySelectorAll('.roulette-item')
-				if (itemElements[randomIndex]) {
-					itemElements.forEach(el => el.classList.remove('winner'))
-					itemElements[randomIndex].classList.add('winner')
-				}
-			}, 10000)
-		}
+		setOpenCategoryId(openCategoryId === category.id ? null : categoryId)
 	}
 
 	return (
-		<div className='pb-[100px]'>
+		<div className='pb-[50px]'>
 			<MainBox>
 				<div className='flex flex-col gap-[6px] '>
 					<div className='flex items-center gap-[6px] text-[24px] font-semibold text-white'>
@@ -178,27 +233,46 @@ const Roulette = () => {
 			</MainBox>
 
 			<div className='roulette-container'>
-				<div className='roulette-box'>
+				<div className='roulette-box' ref={containerRef}>
 					<div className='roulette-center-line'></div>
-					<div className='roulette-items' ref={rouletteRef}>
-						{items.map(item => (
+					<div
+						className='roulette-items'
+						ref={rouletteRef}
+						style={{
+							transitionTimingFunction: isSpinning
+								? 'cubic-bezier(0.25,0.8,0.4,1)'
+								: undefined,
+						}}
+					>
+						{items.map((item, idx) => (
 							<div key={item.id} className='roulette-item'>
-								<img src={item.item} alt={item.type} />
+								<img src={item.image} alt={item.color} />
 							</div>
 						))}
 					</div>
 				</div>
-			</div>
 
-			{/* <div className='flex justify-center mt-4'>
-				<Button
-					className={`${isSpinning ? 'opacity-50 cursor-not-allowed' : ''}`}
-					onClick={spinRoulette}
-					disabled={isSpinning}
-				>
-					{isSpinning ? 'Spinning...' : 'Spin Roulette'}
-				</Button>
-			</div> */}
+				{/* {spinResult && (
+					<div className='result-display'>
+						<div className='result-content'>
+							<span className='result-text'>Winning Number:</span>
+							<div
+								className='result-number'
+								style={{
+									color:
+										spinResult.color === 'red'
+											? '#FF4444'
+											: spinResult.color === 'green'
+											? '#44FF44'
+											: '#4444FF',
+								}}
+							>
+								{spinResult.number} ({spinResult.colorName})
+							</div>
+						</div>
+					</div>
+				)} */}
+			</div>
 
 			<MainBox>
 				<div>
@@ -239,8 +313,14 @@ const Roulette = () => {
 								</div>
 								<img src={KrystalRed} alt='' className='w-[42px] h-[42px]' />
 							</div>
-							<button className='w-full py-[13px] font-bold text-[16px] text-white rounded-[12px] bet-button-shadow bg-[#F1205F] border border-[#1F233C]'>
-								Place Bet
+							<button
+								className='w-full py-[13px] font-bold text-[16px] text-white rounded-[12px] bet-button-shadow bg-[#F1205F] border border-[#1F233C]'
+								onClick={() => spinRoulette('red')}
+								disabled={isSpinning}
+							>
+								{isSpinning && selectedBetType === 'red'
+									? 'Spinning...'
+									: 'Place Bet'}
 							</button>
 						</div>
 						<div className='border border-[#1F233C] bg-[#181B2E] px-[5px] pt-[11px] pb-[7px] rounded-[12px]'>
@@ -251,8 +331,14 @@ const Roulette = () => {
 								</div>
 								<img src={KrystalBlue} alt='' className='w-[42px] h-[42px]' />
 							</div>
-							<button className='w-full py-[13px] font-bold text-[16px] text-white rounded-[12px] bet-button-shadow bg-[#2D2851] border border-[#1F233C]'>
-								Place Bet
+							<button
+								className='w-full py-[13px] font-bold text-[16px] text-white rounded-[12px] bet-button-shadow bg-[#2D2851] border border-[#1F233C]'
+								onClick={() => spinRoulette('black')}
+								disabled={isSpinning}
+							>
+								{isSpinning && selectedBetType === 'black'
+									? 'Spinning...'
+									: 'Place Bet'}
 							</button>
 						</div>
 						<div className='border border-[#1F233C] bg-[#181B2E] px-[5px] pt-[11px] pb-[7px] rounded-[12px]'>
@@ -263,8 +349,14 @@ const Roulette = () => {
 								</div>
 								<img src={KrystalGreen} alt='' className='w-[42px] h-[42px]' />
 							</div>
-							<button className='w-full py-[13px] font-bold text-[16px] text-black rounded-[12px] bet-button-shadow bg-[#0FFFD7] border border-[#1F233C]'>
-								Place Bet
+							<button
+								className='w-full py-[13px] font-bold text-[16px] text-black rounded-[12px] bet-button-shadow bg-[#0FFFD7] border border-[#1F233C]'
+								onClick={() => spinRoulette('green')}
+								disabled={isSpinning}
+							>
+								{isSpinning && selectedBetType === 'green'
+									? 'Spinning...'
+									: 'Place Bet'}
 							</button>
 						</div>
 					</div>

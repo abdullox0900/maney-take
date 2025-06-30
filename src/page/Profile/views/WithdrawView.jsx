@@ -9,8 +9,8 @@ const WithdrawView = () => {
 
 	return (
 		<Box
-			title='History'
-			subtitle='Information on your transactions'
+			title='Withdraw'
+			subtitle='Withdraw your funds'
 			onClose={() => navigate('/profile')}
 		>
 			<div className='flex justify-between items-center bg-[rgba(28,31,51,0.5)] border border-[#1F233C] p-[8px] rounded-xl mb-[25px]'>

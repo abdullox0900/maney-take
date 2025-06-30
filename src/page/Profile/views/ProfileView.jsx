@@ -1,16 +1,14 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import tonIcon from '../../../assets/icon/ton-icon.svg'
 import logo from '../../../assets/profile-logo.svg'
 import MainBox from '../../../components/MainBox/MainBox'
 import Button from '../../../components/UI/Button/Button'
 import './style.css'
 
-const ProfileView = ({
-	walletAddress,
-	isConnecting,
-	onConnectWallet,
-	onNavigate,
-}) => {
+const ProfileView = ({ walletAddress, isConnecting, onConnectWallet }) => {
+	const navigate = useNavigate()
+
 	return (
 		<MainBox>
 			<div className='flex flex-col items-center'>
@@ -28,7 +26,7 @@ const ProfileView = ({
 					</div>
 					<button
 						className='flex items-center gap-[12px] bg-[#131628] border border-[#1F233C] rounded-[10px] p-[12px] text-white text-[18px]'
-						onClick={() => onNavigate('withdraw')}
+						onClick={() => navigate('/profile/withdraw')}
 					>
 						<svg
 							width={24}
@@ -48,7 +46,7 @@ const ProfileView = ({
 
 				<Button
 					className='w-full py-[13px] flex items-center justify-center gap-[12px] mb-[12px] text-[18px]'
-					onClick={() => onNavigate('deposit')}
+					onClick={() => navigate('/profile/deposit')}
 				>
 					<svg
 						width={24}
@@ -129,7 +127,7 @@ const ProfileView = ({
 
 				<button
 					className='flex items-center justify-center w-full text-white text-base z-10 font-medium bg-[rgba(24,28,54,0.5)] py-[26px] dashed-border'
-					onClick={() => onNavigate('history')}
+					onClick={() => navigate('/profile/history')}
 				>
 					Show History
 				</button>

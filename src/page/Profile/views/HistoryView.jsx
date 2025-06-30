@@ -15,7 +15,7 @@ const HistoryView = () => {
 		>
 			<div className='flex justify-between p-[8px] rounded-xl bg-[rgba(28,31,51,0.5)] border border-[#1F233C]'>
 				<button
-					className={`p-[11px] text-[16px] relative ${
+					className={`p-[11px] text-[14px] relative ${
 						activeTab === 'withdrawals'
 							? 'text-white bg-[rgba(28,31,51,0.5)] border border-[#1F233C] rounded-xl'
 							: 'text-[#8A99BD] border border-transparent'
@@ -25,7 +25,7 @@ const HistoryView = () => {
 					Withdrawals
 				</button>
 				<button
-					className={`p-[11px] text-[16px] relative ${
+					className={`p-[11px] text-[14px] relative ${
 						activeTab === 'deposits'
 							? 'text-white bg-[rgba(28,31,51,0.5)] border border-[#1F233C] rounded-xl'
 							: 'text-[#8A99BD] border border-transparent'
@@ -35,7 +35,7 @@ const HistoryView = () => {
 					Deposits
 				</button>
 				<button
-					className={`p-[11px] text-[16px] relative  ${
+					className={`p-[11px] text-[14px] relative  ${
 						activeTab === 'casino'
 							? 'text-white bg-[rgba(28,31,51,0.5)] border border-[#1F233C] rounded-xl'
 							: 'text-[#8A99BD] border border-transparent'

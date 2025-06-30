@@ -5,7 +5,7 @@ import voiceIcon from '../../assets/icon/sound-icon.svg'
 
 const JackpotHeader = ({ variant }) => {
 	return (
-		<div className='flex justify-between items-center mb-[25px]'>
+		<div className='flex justify-between items-center'>
 			<div className='flex flex-col gap-[6px] '>
 				<div className='flex items-center gap-[6px] text-[24px] font-semibold text-white'>
 					<img

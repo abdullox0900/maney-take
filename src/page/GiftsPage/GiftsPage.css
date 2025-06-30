@@ -34,6 +34,7 @@
     opacity: 0.8;
 }
 
+/* 
 .empty-state-cube .top {
     transform: rotateX(90deg) translateZ(30px);
 }
@@ -46,19 +47,4 @@
 .empty-state-cube .front {
     transform: translateZ(30px);
     background-color: #2A3362;
-}
-
-.empty-state-cube .back {
-    transform: rotateY(180deg) translateZ(30px);
-    background-color: #2A3362;
-}
-
-.empty-state-cube .left {
-    transform: rotateY(-90deg) translateZ(30px);
-    background-color: #2A3362;
-}
-
-.empty-state-cube .right {
-    transform: rotateY(90deg) translateZ(30px);
-    background-color: #2A3362;
-}
+} */

@@ -31,7 +31,7 @@ const ShopItemDetail = () => {
 			subtitle={`Buying a gift`}
 			onClose={() => navigate('/shop')}
 		>
-			<div className='pb-[150px]'>
+			<div className='pb-[50px]'>
 				<div className='p-[20px] bg-[#151828] rounded-[20px] border border-[#1F233C]'>
 					<div className='h-[335px] w-full rounded-[10px] mb-[25px] overflow-hidden'>
 						<img

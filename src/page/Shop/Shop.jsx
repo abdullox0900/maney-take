@@ -1,13 +1,23 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import tonIcon from '../../assets/icon/ton-icon.svg'
 import { shopItems as initialShopItems } from '../../data/shop-items'
 import './Shop.css'
 
+const sortOptions = [
+	{ value: 'default', label: 'Default' },
+	{ value: 'price-low', label: 'Price: Low to High' },
+	{ value: 'price-high', label: 'Price: High to Low' },
+	{ value: 'name', label: 'Name (A-Z)' },
+]
+
 const Shop = () => {
 	const [shopItems, setShopItems] = useState(initialShopItems)
 	const [searchQuery, setSearchQuery] = useState('')
+	const [showSortDropdown, setShowSortDropdown] = useState(false)
+	const [sortBy, setSortBy] = useState('default')
 	const navigate = useNavigate()
+	const dropdownRef = useRef(null)
 
 	const goToItemDetail = item => {
 		navigate(`/shop/${item.id}`)
@@ -16,17 +26,38 @@ const Shop = () => {
 	const handleSearch = e => {
 		const query = e.target.value
 		setSearchQuery(query)
+		applySort(query, sortBy)
+	}
 
-		if (query.trim() === '') {
-			setShopItems(initialShopItems)
-		} else {
-			const filteredItems = initialShopItems.filter(
+	const applySort = (query, sortValue) => {
+		let filtered = [...initialShopItems]
+		if (query.trim() !== '') {
+			filtered = filtered.filter(
 				item =>
 					item.id.toString().includes(query) ||
 					item.name.toLowerCase().includes(query.toLowerCase())
 			)
-			setShopItems(filteredItems)
 		}
+		switch (sortValue) {
+			case 'price-low':
+				filtered.sort((a, b) => a.price - b.price)
+				break
+			case 'price-high':
+				filtered.sort((a, b) => b.price - a.price)
+				break
+			case 'name':
+				filtered.sort((a, b) => a.name.localeCompare(b.name))
+				break
+			default:
+				break
+		}
+		setShopItems(filtered)
+	}
+
+	const handleSortSelect = value => {
+		setSortBy(value)
+		setShowSortDropdown(false)
+		applySort(searchQuery, value)
 	}
 
 	return (
@@ -53,8 +84,8 @@ const Shop = () => {
 				</p>
 			</div>
 
-			{/* Search */}
-			<div className='flex items-center justify-between gap-[20px] mb-[25px]'>
+			{/* Search & Sort */}
+			<div className='flex items-center justify-between gap-[20px] mb-[25px] relative'>
 				<div className='relative w-full'>
 					<input
 						type='text'
@@ -77,24 +108,47 @@ const Shop = () => {
 						/>
 					</svg>
 				</div>
-				<div className='flex items-center justify-center w-[50px] h-[50px] new-shadow'>
-					<svg
-						width={25}
-						height={25}
-						viewBox='0 0 25 25'
-						fill='none'
-						xmlns='http://www.w3.org/2000/svg'
+				<div className='relative'>
+					<button
+						onClick={() => setShowSortDropdown(v => !v)}
+						className='flex items-center justify-center w-[50px] h-[50px] new-shadow hover:opacity-80 transition-opacity'
 					>
-						<path
-							d='M16.383 2.19287H8.00299C4.36299 2.19287 2.19299 4.36287 2.19299 8.00287V16.3729C2.19299 20.0229 4.36299 22.1929 8.00299 22.1929H16.373C20.013 22.1929 22.183 20.0229 22.183 16.3829V8.00287C22.193 4.36287 20.023 2.19287 16.383 2.19287ZM11.123 17.3429C11.123 17.4429 11.103 17.5329 11.063 17.6329C10.983 17.8129 10.843 17.9629 10.653 18.0429C10.563 18.0829 10.463 18.1029 10.363 18.1029C10.263 18.1029 10.173 18.0829 10.073 18.0429C9.98299 18.0029 9.90299 17.9529 9.83299 17.8829L6.79299 14.8429C6.50299 14.5529 6.50299 14.0729 6.79299 13.7829C7.08299 13.4929 7.56299 13.4929 7.85299 13.7829L9.61299 15.5429V7.04287C9.61299 6.63287 9.95299 6.29287 10.363 6.29287C10.773 6.29287 11.113 6.63287 11.113 7.04287V17.3429H11.123ZM17.583 10.6129C17.433 10.7629 17.243 10.8329 17.053 10.8329C16.863 10.8329 16.673 10.7629 16.523 10.6129L14.763 8.85287V17.3529C14.763 17.7629 14.423 18.1029 14.013 18.1029C13.603 18.1029 13.263 17.7629 13.263 17.3529V7.04287C13.263 6.94287 13.283 6.85287 13.323 6.75287C13.403 6.57287 13.543 6.42287 13.733 6.34287C13.913 6.26287 14.123 6.26287 14.303 6.34287C14.393 6.38287 14.473 6.43287 14.543 6.50287L17.583 9.54287C17.873 9.84287 17.873 10.3129 17.583 10.6129Z'
-							fill='white'
-						/>
-					</svg>
+						<svg
+							width={25}
+							height={25}
+							viewBox='0 0 25 25'
+							fill='none'
+							xmlns='http://www.w3.org/2000/svg'
+						>
+							<path
+								d='M16.383 2.19287H8.00299C4.36299 2.19287 2.19299 4.36287 2.19299 8.00287V16.3729C2.19299 20.0229 4.36299 22.1929 8.00299 22.1929H16.373C20.013 22.1929 22.183 20.0229 22.183 16.3829V8.00287C22.193 4.36287 20.023 2.19287 16.383 2.19287ZM11.123 17.3429C11.123 17.4429 11.103 17.5329 11.063 17.6329C10.983 17.8129 10.843 17.9629 10.653 18.0429C10.563 18.0829 10.463 18.1029 10.363 18.1029C10.263 18.1029 10.173 18.0829 10.073 18.0429C9.98299 18.0029 9.90299 17.9529 9.83299 17.8829L6.79299 14.8429C6.50299 14.5529 6.50299 14.0729 6.79299 13.7829C7.08299 13.4929 7.56299 13.4929 7.85299 13.7829L9.61299 15.5429V7.04287C9.61299 6.63287 9.95299 6.29287 10.363 6.29287C10.773 6.29287 11.113 6.63287 11.113 7.04287V17.3429H11.123ZM17.583 10.6129C17.433 10.7629 17.243 10.8329 17.053 10.8329C16.863 10.8329 16.673 10.7629 16.523 10.6129L14.763 8.85287V17.3529C14.763 17.7629 14.423 18.1029 14.013 18.1029C13.603 18.1029 13.263 17.7629 13.263 17.3529V7.04287C13.263 6.94287 13.283 6.85287 13.323 6.75287C13.403 6.57287 13.543 6.42287 13.733 6.34287C13.913 6.26287 14.123 6.26287 14.303 6.34287C14.393 6.38287 14.473 6.43287 14.543 6.50287L17.583 9.54287C17.873 9.84287 17.873 10.3129 17.583 10.6129Z'
+								fill='white'
+							/>
+						</svg>
+					</button>
+					{showSortDropdown && (
+						<div
+							ref={dropdownRef}
+							className='absolute right-0 mt-2 w-[180px] bg-[#181B2E] border border-[#2B334E] rounded-[12px] shadow-lg z-20'
+						>
+							{sortOptions.map(option => (
+								<button
+									key={option.value}
+									onClick={() => handleSortSelect(option.value)}
+									className={`w-full text-left px-4 py-3 text-white hover:bg-[#232843] rounded-[12px] transition-colors ${
+										sortBy === option.value ? 'bg-[#232843]' : ''
+									}`}
+								>
+									{option.label}
+								</button>
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 
 			{/* Shop Items Grid */}
-			<div className='grid grid-cols-2 gap-[20px] max-[390px]:gap-[15px] pb-[150px]'>
+			<div className='grid grid-cols-2 gap-[20px] max-[390px]:gap-[15px] pb-[50px]'>
 				{shopItems.map((item, index) => (
 					<div
 						key={index}

@@ -2,22 +2,30 @@ import { useState } from 'react'
 import computingIcon from '../../../assets/icon/computing.svg'
 import Button from '../Button/Button'
 
-const BetAmount = ({ initialValue = 0.1, onChange, onBet }) => {
+const BetAmount = ({
+	initialValue = 0.1,
+	onChange,
+	onBet,
+	disabled = false,
+}) => {
 	const [amount, setAmount] = useState(initialValue)
 
 	const handleDecrease = () => {
+		if (disabled) return
 		const newAmount = Math.max(0.1, parseFloat((amount - 0.1).toFixed(2)))
 		setAmount(newAmount)
 		if (onChange) onChange(newAmount)
 	}
 
 	const handleIncrease = () => {
+		if (disabled) return
 		const newAmount = parseFloat((amount + 0.1).toFixed(2))
 		setAmount(newAmount)
 		if (onChange) onChange(newAmount)
 	}
 
 	const handleBet = () => {
+		if (disabled) return
 		if (onBet) onBet(amount)
 	}
 
@@ -30,8 +38,11 @@ const BetAmount = ({ initialValue = 0.1, onChange, onBet }) => {
 
 			<div className='flex items-center bg-[rgba(25,27,49,0.4)] h-[80px] p-[11px] border border-[#2B2F53] rounded-[12px] overflow-hidden'>
 				<button
-					className='bg-[#101325] border-[1px] border-[#2B2F53] rounded-[12px] text-white text-2xl w-[57px] h-[57px] flex items-center justify-center cursor-pointer transition-colors'
+					className={`bg-[#101325] border-[1px] border-[#2B2F53] rounded-[12px] text-white text-2xl w-[57px] h-[57px] flex items-center justify-center cursor-pointer transition-colors ${
+						disabled ? 'opacity-50 cursor-not-allowed' : ''
+					}`}
 					onClick={handleDecrease}
+					disabled={disabled}
 				>
 					<svg
 						width={19}
@@ -50,8 +61,11 @@ const BetAmount = ({ initialValue = 0.1, onChange, onBet }) => {
 					{amount}
 				</div>
 				<button
-					className='bg-[#101325] border-[1px] border-[#2B2F53] rounded-[12px] text-white text-2xl w-[57px] h-[57px] flex items-center justify-center cursor-pointer transition-colors'
+					className={`bg-[#101325] border-[1px] border-[#2B2F53] rounded-[12px] text-white text-2xl w-[57px] h-[57px] flex items-center justify-center cursor-pointer transition-colors ${
+						disabled ? 'opacity-50 cursor-not-allowed' : ''
+					}`}
 					onClick={handleIncrease}
+					disabled={disabled}
 				>
 					<svg
 						width={19}
@@ -68,7 +82,13 @@ const BetAmount = ({ initialValue = 0.1, onChange, onBet }) => {
 				</button>
 			</div>
 
-			<Button className='flex items-center justify-center gap-[12px] py-[28px]'>
+			<Button
+				className={`flex items-center justify-center gap-[12px] py-[28px] ${
+					disabled ? 'opacity-50 cursor-not-allowed' : ''
+				}`}
+				onClick={handleBet}
+				disabled={disabled}
+			>
 				<span>
 					<svg
 						width={24}
@@ -95,7 +115,7 @@ const BetAmount = ({ initialValue = 0.1, onChange, onBet }) => {
 						/>
 					</svg>
 				</span>
-				BET
+				{disabled ? 'SPINNING...' : 'BET'}
 			</Button>
 		</div>
 	)

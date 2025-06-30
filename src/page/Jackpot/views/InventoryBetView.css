@@ -41,7 +41,3 @@ button:focus {
         transform: scale(1);
     }
 }
-
-.fixed button {
-    animation: pulseButton 2s infinite;
-}

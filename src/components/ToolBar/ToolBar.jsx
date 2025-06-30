@@ -30,7 +30,7 @@ const ToolBar = () => {
 	const activeToolPath = getActiveToolPath()
 
 	return (
-		<div className='fixed bottom-0 left-0 w-full flex justify-center items-center gap-[12px] py-[18px] px-[20px] tool-bar-bg'>
+		<div className=' bottom-0 left-0 w-full flex justify-center items-center gap-[12px] py-[18px] px-[20px] tool-bar-bg z-50'>
 			<div className='flex items-center justify-between w-full max-w-[500px]'>
 				{tools.map(tool => {
 					const isActive = activeToolPath === tool.path

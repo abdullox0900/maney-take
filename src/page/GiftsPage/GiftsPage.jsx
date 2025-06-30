@@ -11,6 +11,7 @@ const GiftsPage = () => {
 	const [gifts, setGifts] = useState([])
 	const [showWithdraw, setShowWithdraw] = useState(false)
 	const [isEmpty, setIsEmpty] = useState(false)
+	const [showSellModal, setShowSellModal] = useState(false)
 	const navigate = useNavigate()
 
 	useEffect(() => {
@@ -21,6 +22,13 @@ const GiftsPage = () => {
 			setGifts(initialGifts)
 		}
 	}, [isEmpty])
+
+	// Cleanup effect to restore body scroll on unmount
+	useEffect(() => {
+		return () => {
+			document.body.style.overflow = 'unset'
+		}
+	}, [])
 
 	const toggleGiftActive = id => {
 		setGifts(
@@ -43,6 +51,37 @@ const GiftsPage = () => {
 		.filter(gift => gift.isActive)
 		.reduce((sum, gift) => sum + gift.value, 0)
 
+	const handleSell = () => {
+		setShowSellModal(true)
+		// Prevent body scroll when modal is open
+		document.body.style.overflow = 'hidden'
+	}
+
+	const confirmSell = () => {
+		// Handle sell logic here
+		console.log('Selling gifts for:', totalValue)
+		setShowSellModal(false)
+		// Restore body scroll
+		document.body.style.overflow = 'unset'
+		// Reset active gifts
+		setGifts(gifts.map(gift => ({ ...gift, isActive: false })))
+		setShowWithdraw(false)
+	}
+
+	const closeSellModal = () => {
+		setShowSellModal(false)
+		// Restore body scroll
+		document.body.style.overflow = 'unset'
+	}
+
+	const handleWithdraw = () => {
+		// Handle withdraw logic here
+		console.log('Withdrawing gifts for:', totalValue)
+		// Reset active gifts
+		setGifts(gifts.map(gift => ({ ...gift, isActive: false })))
+		setShowWithdraw(false)
+	}
+
 	return (
 		<div className='flex flex-col z-50 pt-[33px] px-[40px] h-auto border border-[#2B2F53] rounded-t-[30px] gifts-page max-[390px]:px-[20px]'>
 			{/* Header */}
@@ -57,7 +96,7 @@ const GiftsPage = () => {
 			</div>
 
 			{/* Content */}
-			<div className='pb-[150px]'>
+			<div className='pb-[50px]'>
 				{gifts.length === 0 ? (
 					// Empty state
 					<div className='h-[calc(100vh-300px)] flex flex-col items-center justify-center'>
@@ -102,19 +141,80 @@ const GiftsPage = () => {
 						))}
 					</div>
 				)}
-				{/* Withdraw button */}
+
+				{/* Action buttons */}
 				{showWithdraw && (
-					<div className='absolute bottom-[18%] left-[20px] right-[20px]'>
-						<Button className='w-full flex justify-between items-center p-[30px]'>
-							<span className='font-bold'>Withdraw</span>
-							<div className='flex items-center gap-[12px]'>
-								<img src={tonIcon} alt='arrow-down' />
-								<span className='text-[16px]'>{totalValue}</span>
+					<div className='fixed bottom-[20px] left-[20px] right-[20px] flex gap-[12px] z-50'>
+						<Button
+							onClick={handleSell}
+							className='flex-1 bg-[#007AFF] text-white rounded-[12px] py-[15px] px-[20px] flex justify-center items-center gap-[8px] font-medium'
+						>
+							<span>Sell</span>
+							<div className='flex items-center gap-[4px]'>
+								<img src={tonIcon} alt='ton' className='w-[16px] h-[16px]' />
+								<span>{totalValue}</span>
 							</div>
 						</Button>
+						<button
+							onClick={handleWithdraw}
+							className='flex-1 bg-[#1B1E36] border border-[#2B2F53] text-[#fff] rounded-[12px] py-[15px] px-[20px] flex justify-center items-center gap-[8px] font-medium'
+						>
+							<span>Withdraw</span>
+							<div className='flex items-center gap-[4px]'>
+								<img src={tonIcon} alt='ton' className='w-[16px] h-[16px]' />
+								<span>{totalValue}</span>
+							</div>
+						</button>
 					</div>
 				)}
 			</div>
+
+			{/* Sell Confirmation Modal */}
+			{showSellModal && (
+				<div
+					className='fixed inset-0 flex items-center justify-center z-[9999] p-[20px]'
+					style={{ zIndex: 9999 }}
+				>
+					{/* Backdrop with blur */}
+					<div
+						className='absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm'
+						onClick={closeSellModal}
+					></div>
+
+					{/* Modal content */}
+					<div className='bg-[#15182B] border border-[#2B334E] rounded-[20px] p-[30px] w-full max-w-[350px] relative z-10 mx-auto'>
+						<button
+							onClick={closeSellModal}
+							className='absolute top-[35px] right-[20px] text-white text-[20px] hover:opacity-70 transition-opacity'
+						>
+							<img src={closeIcon} alt='close' className='w-[15px] h-[15px]' />
+						</button>
+
+						<div className='text-center'>
+							<h2 className='text-white text-[20px] font-medium mb-[25px] leading-[28px]'>
+								Are you sure you
+								<br />
+								want to sell?
+							</h2>
+
+							<div className='flex gap-[12px]'>
+								<button
+									onClick={confirmSell}
+									className='flex-1 bg-[#0077FF] text-white rounded-[12px] py-[12px] px-[20px] font-medium hover:bg-[#0056CC] transition-colors'
+								>
+									Yes
+								</button>
+								<button
+									onClick={closeSellModal}
+									className='flex-1 bg-[#1B1E36] border border-[#2B2F53] text-white rounded-[12px] py-[12px] px-[20px] font-medium hover:bg-white hover:bg-opacity-10 transition-colors'
+								>
+									No
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	)
 }
